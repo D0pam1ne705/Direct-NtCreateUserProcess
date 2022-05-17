@@ -74,7 +74,7 @@ NTSTATUS DoDirect(LPCWSTR lpProcessImageName) {
 			RTL_USER_PROC_PARAMS_NORMALIZED);
 
 		if (!NT_SUCCESS(status)) {
-			printf("[-] %-30s = %d\n", "RtlCreateProcessParametersEx fail", ::GetLastError());
+			printf("[-] %-30s = %d\n", "RtlCreateProcessParametersEx fail", status);
 			break;
 		}
 		
@@ -122,7 +122,7 @@ NTSTATUS DoDirect(LPCWSTR lpProcessImageName) {
 			&createInfo,
 			&attrList);
 		if (!NT_SUCCESS(status)) {
-			printf("[-] %-30s = %d\n", "NtCreateUserProcess failed", ::GetLastError());
+			printf("[-] %-30s = %d\n", "NtCreateUserProcess failed", status);
 			break;
 		}
 		_RtlDestroyProcessParameters(pProcParams);
@@ -156,7 +156,7 @@ NTSTATUS DoDirect(LPCWSTR lpProcessImageName) {
 			sizeof(PROCESS_BASIC_INFORMATION),
 			&ReturnLength);
 		if (!NT_SUCCESS(status)) {
-			printf("[-] %-30s = %d\n", "NtQueryInformationProcess fail", ::GetLastError());
+			printf("[-] %-30s = %d\n", "NtQueryInformationProcess fail", status);
 			break;
 		}
 		pebAddr = (PEB*)pbi.PebBaseAddress;
@@ -176,8 +176,8 @@ NTSTATUS DoDirect(LPCWSTR lpProcessImageName) {
 		// basic fields
 		m.CreateProcessMSG.ProcessHandle = (HANDLE)((DWORD64)hProcess | 2);
 		m.CreateProcessMSG.ThreadHandle = hThread;
-		m.CreateProcessMSG.ClientId.UniqueProcess = ::GetProcessId(hProcess);
-		m.CreateProcessMSG.ClientId.UniqueThread = ::GetThreadId(hThread);
+		m.CreateProcessMSG.ClientId.UniqueProcess = pClientId->UniqueProcess;
+		m.CreateProcessMSG.ClientId.UniqueThread = pClientId->UniqueThread;
 		m.CreateProcessMSG.CreationFlags = 0x0;
 		m.CreateProcessMSG.VdmBinaryType = 0x0;
 		m.CreateProcessMSG.PebAddressNative = (ULONG64)pebAddr;
@@ -216,7 +216,7 @@ NTSTATUS DoDirect(LPCWSTR lpProcessImageName) {
 
 		status = _CsrCaptureMessageMultiUnicodeStringsInPlace(&captureBuffer, 4, stringToCapture);
 		if (!NT_SUCCESS(status)) {
-			printf("[-] %-30s = %d\n", "capture string fail", ::GetLastError());
+			printf("[-] %-30s = %d\n", "capture string fail", status);
 			break;
 		}
 		printf("[+] %-30s = 0x%p\n", "capture success!", captureBuffer);
@@ -239,7 +239,7 @@ NTSTATUS DoDirect(LPCWSTR lpProcessImageName) {
 			0
 		);
 		if (!NT_SUCCESS(status)) {
-			printf("[-] %-30s = %d\n", "NtResumeThread fail", ::GetLastError());
+			printf("[-] %-30s = %d\n", "NtResumeThread fail", status);
 			break;
 		}
 	} while (0);
