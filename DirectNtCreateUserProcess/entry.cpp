@@ -74,7 +74,7 @@ NTSTATUS DoDirect(LPCWSTR lpProcessImageName) {
 			RTL_USER_PROC_PARAMS_NORMALIZED);
 
 		if (!NT_SUCCESS(status)) {
-			printf("[-] %-30s = %d\n", "RtlCreateProcessParametersEx fail", status);
+			printf("[-] %-30s = %d\n", "RtlCreateProcessParametersEx failed", status);
 			break;
 		}
 		
@@ -156,7 +156,7 @@ NTSTATUS DoDirect(LPCWSTR lpProcessImageName) {
 			sizeof(PROCESS_BASIC_INFORMATION),
 			&ReturnLength);
 		if (!NT_SUCCESS(status)) {
-			printf("[-] %-30s = %d\n", "NtQueryInformationProcess fail", status);
+			printf("[-] %-30s = %d\n", "NtQueryInformationProcess failed", status);
 			break;
 		}
 		pebAddr = (PEB*)pbi.PebBaseAddress;
@@ -216,17 +216,14 @@ NTSTATUS DoDirect(LPCWSTR lpProcessImageName) {
 
 		status = _CsrCaptureMessageMultiUnicodeStringsInPlace(&captureBuffer, 4, stringToCapture);
 		if (!NT_SUCCESS(status)) {
-			printf("[-] %-30s = %d\n", "capture string fail", status);
+			printf("[-] %-30s = %d\n", "capture string failed", status);
 			break;
 		}
 		printf("[+] %-30s = 0x%p\n", "capture success!", captureBuffer);
 
-		//Sleep(3000);
-		//DebugBreak();
-
 		status = _CsrClientCallServer(&m, captureBuffer, 0x1001D, 0x218);
 		if (!NT_SUCCESS(status)) {
-			printf("[-] %-30s = 0x%X\n", "CsrClientCallServer fail", m.ReturnValue);
+			printf("[-] %-30s = 0x%X\n", "CsrClientCallServer failed", m.ReturnValue);
 			break;
 		}
 #endif 
@@ -239,7 +236,7 @@ NTSTATUS DoDirect(LPCWSTR lpProcessImageName) {
 			0
 		);
 		if (!NT_SUCCESS(status)) {
-			printf("[-] %-30s = %d\n", "NtResumeThread fail", status);
+			printf("[-] %-30s = %d\n", "NtResumeThread failed", status);
 			break;
 		}
 	} while (0);
